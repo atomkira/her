@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Ping backend health
         env:
-          RENDER_BACKEND_URL: https://your-backend.onrender.com
+          RENDER_BACKEND_URL: https://her-hjee.onrender.com
         run: |
           set -e
           echo "Pinging $RENDER_BACKEND_URL/api/health"
