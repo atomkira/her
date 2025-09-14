@@ -1,11 +1,30 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 export default function ProgressTracker({ blocks = [] }) {
   const [dates, setDates] = useState(new Set()) // days studied (yyyy-mm-dd)
 
+  // hydrate from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('progress_dates')
+      if (raw) {
+        const arr = JSON.parse(raw)
+        if (Array.isArray(arr)) setDates(new Set(arr))
+      }
+    } catch {}
+  }, [])
+
+  // persist on change
+  useEffect(() => {
+    try {
+      localStorage.setItem('progress_dates', JSON.stringify(Array.from(dates)))
+    } catch {}
+  }, [dates])
+
   const todayKey = new Date().toISOString().slice(0, 10)
 
   const addToday = () => setDates((prev) => new Set(prev).add(todayKey))
+  const clearToday = () => setDates((prev) => { const s = new Set(prev); s.delete(todayKey); return s })
 
   const streak = useMemo(() => {
     let count = 0

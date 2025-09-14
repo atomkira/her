@@ -24,6 +24,20 @@ export default function WaterReminder() {
     } catch {}
   }, [])
 
+  // Hydrate initial state from localStorage (fallback when backend is unavailable)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('water_state')
+      if (raw) {
+        const s = JSON.parse(raw)
+        if (Number.isFinite(s?.intervalMin)) setIntervalMin(s.intervalMin)
+        if (Number.isFinite(s?.nextAt)) setNextAt(s.nextAt)
+        if (Number.isFinite(s?.totalReminders)) setTotal(s.totalReminders)
+        setNow(Date.now())
+      }
+    } catch {}
+  }, [])
+
   // load from backend
   useEffect(() => {
     const load = async () => {
@@ -36,6 +50,10 @@ export default function WaterReminder() {
         setNextAt(Number.isFinite(na) ? na : Date.now() + (Number.isFinite(im) ? im : 30) * 60000)
         setTotal(Number.isFinite(tr) ? tr : 0)
         setNow(Date.now())
+        // Persist the loaded server state to localStorage as a backup
+        try {
+          localStorage.setItem('water_state', JSON.stringify({ intervalMin: im, nextAt: na, totalReminders: tr }))
+        } catch {}
       } catch (e) {
         // ignore network errors
       }
@@ -123,6 +141,17 @@ export default function WaterReminder() {
         if (Number.isFinite(saved.intervalMin)) setIntervalMin(saved.intervalMin)
         if (Number.isFinite(saved.nextAt)) setNextAt(saved.nextAt)
         if (Number.isFinite(saved.totalReminders)) setTotal(saved.totalReminders)
+      }
+    } catch {}
+    // Always store to localStorage as well (best-effort)
+    try {
+      const toStore = { ...payload }
+      if (Number.isFinite(toStore.intervalMin) && Number.isFinite(toStore.nextAt) && Number.isFinite(toStore.totalReminders)) {
+        localStorage.setItem('water_state', JSON.stringify({
+          intervalMin: toStore.intervalMin,
+          nextAt: toStore.nextAt,
+          totalReminders: toStore.totalReminders,
+        }))
       }
     } catch {}
   }

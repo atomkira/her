@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { getJSON, postJSON, putJSON, del } from '../lib/api'
 import PomodoroTimer from './PomodoroTimer'
 import CalendarSchedule from './CalendarSchedule'
 import ThemeCustomizer from './ThemeCustomizer'
@@ -25,9 +26,7 @@ export default function StudyTrackerApp() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/blocks')
-        if (!res.ok) throw new Error('Failed to load blocks')
-        const data = await res.json()
+        const data = await getJSON('/api/blocks')
         // Map backend _id to id for UI
         setBlocks(data.map((b) => ({ id: b._id ?? b.id, subject: b.subject, start: b.start, end: b.end, date: b.date })))
       } catch (e) {
@@ -42,9 +41,7 @@ export default function StudyTrackerApp() {
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const res = await fetch('/api/calendar-tasks')
-        if (!res.ok) throw new Error('Failed to load calendar tasks')
-        const data = await res.json()
+        const data = await getJSON('/api/calendar-tasks')
         setCalendarTasks(data.map((t) => ({ 
           id: t._id ?? t.id, 
           title: t.title, 
@@ -67,46 +64,27 @@ export default function StudyTrackerApp() {
 
   // CRUD handlers
   const createBlock = async (payload) => {
-    const res = await fetch('/api/blocks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject: payload.subject, date: payload.date, start: payload.start, end: payload.end }),
-    })
-    if (!res.ok) throw new Error('Create failed')
-    const saved = await res.json()
+    const saved = await postJSON('/api/blocks', { subject: payload.subject, date: payload.date, start: payload.start, end: payload.end })
     const item = { id: saved._id ?? saved.id, subject: saved.subject, start: saved.start, end: saved.end, date: saved.date }
     setBlocks((arr) => [...arr, item])
     return item
   }
 
   const updateBlock = async (id, payload) => {
-    const res = await fetch(`/api/blocks/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject: payload.subject, date: payload.date, start: payload.start, end: payload.end }),
-    })
-    if (!res.ok) throw new Error('Update failed')
-    const saved = await res.json()
+    const saved = await putJSON(`/api/blocks/${id}`, { subject: payload.subject, date: payload.date, start: payload.start, end: payload.end })
     const item = { id: saved._id ?? saved.id, subject: saved.subject, start: saved.start, end: saved.end, date: saved.date }
     setBlocks((arr) => arr.map((x) => (x.id === id ? item : x)))
     return item
   }
 
   const deleteBlock = async (id) => {
-    const res = await fetch(`/api/blocks/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('Delete failed')
+    await del(`/api/blocks/${id}`)
     setBlocks((arr) => arr.filter((x) => x.id !== id))
   }
 
   // Calendar task CRUD handlers
   const createCalendarTask = async (payload) => {
-    const res = await fetch('/api/calendar-tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) throw new Error('Create task failed')
-    const saved = await res.json()
+    const saved = await postJSON('/api/calendar-tasks', payload)
     const item = { 
       id: saved._id ?? saved.id, 
       title: saved.title, 
@@ -124,13 +102,7 @@ export default function StudyTrackerApp() {
   }
 
   const updateCalendarTask = async (id, payload) => {
-    const res = await fetch(`/api/calendar-tasks/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) throw new Error('Update task failed')
-    const saved = await res.json()
+    const saved = await putJSON(`/api/calendar-tasks/${id}`, payload)
     const item = { 
       id: saved._id ?? saved.id, 
       title: saved.title, 
@@ -148,8 +120,7 @@ export default function StudyTrackerApp() {
   }
 
   const deleteCalendarTask = async (id) => {
-    const res = await fetch(`/api/calendar-tasks/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('Delete task failed')
+    await del(`/api/calendar-tasks/${id}`)
     setCalendarTasks((arr) => arr.filter((x) => x.id !== id))
   }
 

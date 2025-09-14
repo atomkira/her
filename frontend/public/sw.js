@@ -44,7 +44,7 @@ setInterval(() => {
 // Enhanced push event for notifications
 self.addEventListener('push', (event) => {
   let notificationData = {
-    title: 'Study Tracker 💖',
+    title: 'Study Tracker ',
     body: 'You have a new notification!',
     icon: '/favicon.ico',
     badge: '/favicon.ico',
@@ -65,8 +65,8 @@ self.addEventListener('push', (event) => {
         tag: pushData.tag || notificationData.tag,
         data: pushData.data || {},
         actions: pushData.actions || [
-          { action: 'view', title: '💖 View', icon: '/favicon.ico' },
-          { action: 'dismiss', title: '💤 Dismiss', icon: '/favicon.ico' }
+          { action: 'view', title: ' View', icon: '/favicon.ico' },
+          { action: 'dismiss', title: ' Dismiss', icon: '/favicon.ico' }
         ]
       };
     } catch (error) {
@@ -153,15 +153,15 @@ async function checkAndSendNotifications() {
 
         // Send reminder 5 minutes before (with 2-minute window for reliability)
         if (currentTime >= reminderTime && currentTime < reminderTime + 2 && !task.reminderSent) {
-          self.registration.showNotification('💖 Task Reminder', {
-            body: `${task.title} starts in 5 minutes! 💕`,
+          self.registration.showNotification(' Task Reminder', {
+            body: `${task.title} starts in 5 minutes! `,
             icon: '/favicon.ico',
             tag: `reminder-${task.id}`,
             requireInteraction: true,
             vibrate: [100, 50, 100],
             actions: [
-              { action: 'view', title: '💖 View Task' },
-              { action: 'dismiss', title: '💤 Dismiss' }
+              { action: 'view', title: ' View Task' },
+              { action: 'dismiss', title: ' Dismiss' }
             ]
           });
           
@@ -172,15 +172,15 @@ async function checkAndSendNotifications() {
 
         // Send notification at task time (with 2-minute window)
         if (currentTime >= taskTime && currentTime < taskTime + 2 && !task.startNotificationSent) {
-          self.registration.showNotification('💕 Task Time!', {
-            body: `Time for: ${task.title} 💖`,
+          self.registration.showNotification(' Task Time!', {
+            body: `Time for: ${task.title} `,
             icon: '/favicon.ico',
             tag: `task-${task.id}`,
             requireInteraction: true,
             vibrate: [200, 100, 200],
             actions: [
-              { action: 'start', title: '💖 Start Task' },
-              { action: 'snooze', title: '💤 Snooze 5min' }
+              { action: 'start', title: ' Start Task' },
+              { action: 'snooze', title: ' Snooze 5min' }
             ]
           });
           
@@ -197,7 +197,7 @@ async function checkAndSendNotifications() {
 
 // --- Refactored IndexedDB Logic ---
 const DB_NAME = 'StudyTrackerDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const TASK_STORE_NAME = 'tasks';
 
 let dbPromise = null;
@@ -211,6 +211,9 @@ function getDb() {
         const db = event.target.result;
         if (!db.objectStoreNames.contains(TASK_STORE_NAME)) {
           db.createObjectStore(TASK_STORE_NAME, { keyPath: 'id' });
+        } else {
+          // Handle potential schema upgrades if needed
+          console.log('Object store already exists, no changes needed for version 2');
         }
       };
 
@@ -316,15 +319,15 @@ function scheduleReminderNotification(task, reminderTime, reminderMinutes) {
   
   if (delay > 0 && delay <= 24 * 60 * 60 * 1000) {
     setTimeout(() => {
-      self.registration.showNotification('💖 Task Reminder', {
-        body: `${task.title} starts in ${reminderMinutes} minutes! 💕`,
+      self.registration.showNotification(' Task Reminder', {
+        body: `${task.title} starts in ${reminderMinutes} minutes! `,
         icon: '/favicon.ico',
         tag: `reminder-${task.id}`,
         requireInteraction: true,
         vibrate: [100, 50, 100],
         actions: [
-          { action: 'view', title: '💖 View Task' },
-          { action: 'dismiss', title: '💤 Dismiss' }
+          { action: 'view', title: ' View Task' },
+          { action: 'dismiss', title: ' Dismiss' }
         ]
       });
     }, delay);
@@ -338,15 +341,15 @@ function scheduleTaskStartNotification(task, taskTime) {
   
   if (delay > 0 && delay <= 24 * 60 * 60 * 1000) {
     setTimeout(() => {
-      self.registration.showNotification('💕 Task Time!', {
-        body: `Time for: ${task.title} 💖`,
+      self.registration.showNotification(' Task Time!', {
+        body: `Time for: ${task.title} `,
         icon: '/favicon.ico',
         tag: `task-${task.id}`,
         requireInteraction: true,
         vibrate: [200, 100, 200],
         actions: [
-          { action: 'start', title: '💖 Start Task' },
-          { action: 'snooze', title: '💤 Snooze 5min' }
+          { action: 'start', title: ' Start Task' },
+          { action: 'snooze', title: ' Snooze 5min' }
         ]
       });
     }, delay);

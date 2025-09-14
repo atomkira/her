@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { getJSON, putJSON } from '../lib/api'
 
 const WORK_MIN = 25
 const BREAK_MIN = 5
@@ -64,9 +65,7 @@ export default function PomodoroTimer() {
       const cid = clientIdRef.current
       if (!cid) return
       try {
-        const res = await fetch(`/api/pomodoro/${cid}`)
-        if (!res.ok) return
-        const doc = await res.json()
+        const doc = await getJSON(`/api/pomodoro/${cid}`)
         // Compute elapsed since server snapshot
         let { isRunning: r, isBreak: b, secondsLeft: s, referenceTs } = doc || {}
         if (typeof s !== 'number') return
@@ -142,15 +141,11 @@ export default function PomodoroTimer() {
       const cid = clientIdRef.current
       if (!cid) return
       try {
-        await fetch(`/api/pomodoro/${cid}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            isRunning,
-            isBreak,
-            secondsLeft,
-            referenceTs: Date.now(),
-          }),
+        await putJSON(`/api/pomodoro/${cid}`, {
+          isRunning,
+          isBreak,
+          secondsLeft,
+          referenceTs: Date.now(),
         })
       } catch {
         // ignore network errors

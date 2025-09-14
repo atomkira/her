@@ -40,6 +40,19 @@ export default function EncouragementNotes() {
     } catch {}
   }, [])
 
+  // Hydrate from localStorage fallback before server load
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('notes_state')
+      if (raw) {
+        const s = JSON.parse(raw)
+        if (typeof s?.auto === 'boolean') setAuto(s.auto)
+        if (Number.isFinite(s?.minutes)) setMinutes(s.minutes)
+        if (Number.isFinite(s?.seconds)) setSeconds(s.seconds)
+      }
+    } catch {}
+  }, [])
+
   // Load state from backend (if exists)
   useEffect(() => {
     const load = async () => {
@@ -109,13 +122,21 @@ export default function EncouragementNotes() {
   useEffect(() => {
     // Persist on auto toggle
     persist(false)
+    // Also persist to localStorage
+    try { localStorage.setItem('notes_state', JSON.stringify({ auto, minutes, seconds })) } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auto])
   useEffect(() => {
     // Persist when minutes change (debounced via tick or user action)
     persist(false)
+    try { localStorage.setItem('notes_state', JSON.stringify({ auto, minutes, seconds })) } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minutes])
+
+  // Also persist seconds periodically to localStorage so UI restores
+  useEffect(() => {
+    try { localStorage.setItem('notes_state', JSON.stringify({ auto, minutes, seconds })) } catch {}
+  }, [seconds])
 
   return (
     <div className="rounded-2xl border p-5 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-rose-900/20 dark:to-pink-900/10 border-rose-200/60 dark:border-rose-800/60">

@@ -33,6 +33,10 @@ app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 const PORT = process.env.PORT || 5001
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/studytracker'
 const DB_NAME = process.env.MONGODB_DB || undefined
