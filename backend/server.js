@@ -65,3 +65,10 @@ app.use('/api/note-timer', noteTimerRouter)
 app.use('/api/water', waterRouter)
 app.use('/api/push', pushNotificationsRouter)
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
+
+// Catch-all handler: send back React's index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
+})
