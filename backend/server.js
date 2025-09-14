@@ -28,6 +28,11 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Friendly root route for Render and manual checks
+app.get('/', (_req, res) => {
+  res.type('text/plain').send('Study Tracker API is running. Try GET /api/health')
+})
+
 const PORT = process.env.PORT || 5001
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/studytracker'
 const DB_NAME = process.env.MONGODB_DB || undefined
@@ -59,3 +64,4 @@ app.use('/api/calendar-tasks', calendarTasksRouter)
 app.use('/api/note-timer', noteTimerRouter)
 app.use('/api/water', waterRouter)
 app.use('/api/push', pushNotificationsRouter)
+
