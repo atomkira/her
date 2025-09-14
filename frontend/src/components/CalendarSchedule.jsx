@@ -226,82 +226,82 @@ export default function CalendarSchedule({ tasks, setTasks, onCreateTask, onUpda
   const selectedDateTasks = getTasksForDate(selectedDate)
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in-up">
       {/* Calendar Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <h2 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
             💖 Calendar Schedule 💕
           </h2>
-          <div className="animate-float text-2xl">💖</div>
-          <div className="animate-float text-2xl" style={{animationDelay: '0.5s'}}>💕</div>
-          <div className="animate-float text-2xl" style={{animationDelay: '1s'}}>✨</div>
+          <div className="hidden sm:block animate-float text-2xl">💖</div>
+          <div className="hidden sm:block animate-float text-2xl" style={{animationDelay: '0.5s'}}>💕</div>
+          <div className="hidden sm:block animate-float text-2xl" style={{animationDelay: '1s'}}>✨</div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full sm:w-auto items-center gap-2">
           <button
             onClick={() => setShowNotificationSettings(true)}
-            className="group relative rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 heart-decoration animate-love-pulse"
+            className="group flex-1 sm:flex-initial text-xs sm:text-base relative rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-2 sm:px-4 sm:py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 heart-decoration animate-love-pulse"
           >
             <span className="flex items-center gap-2 font-semibold">
-              <span className="text-xl group-hover:animate-wiggle">💖</span>
+              <span className="text-lg sm:text-xl group-hover:animate-wiggle">💖</span>
               Notifications
             </span>
           </button>
           <button
             onClick={() => setShowTaskModal(true)}
-            className="group relative rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-love-pulse"
+            className="group flex-1 sm:flex-initial text-xs sm:text-base relative rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white px-3 py-2 sm:px-6 sm:py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-love-pulse"
           >
             <span className="flex items-center gap-2 font-semibold">
-              <span className="text-xl group-hover:animate-wiggle">💕</span>
+              <span className="text-lg sm:text-xl group-hover:animate-wiggle">💕</span>
               Add Task
             </span>
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
-            <div className="absolute -top-1 -right-1 animate-heart-beat text-xs">💖</div>
+            <div className="hidden sm:block absolute -top-1 -right-1 animate-heart-beat text-xs">💖</div>
           </button>
         </div>
       </div>
 
       {/* Calendar */}
-      <div className="bg-gradient-to-br from-white/95 to-pink-50/95 dark:from-slate-800/95 dark:to-pink-950/95 backdrop-blur-sm rounded-3xl border-2 border-pink-200/60 dark:border-pink-700/60 p-8 shadow-2xl hearts-bg relative overflow-hidden">
-        <div className="absolute top-4 right-4 animate-heart-beat text-2xl opacity-20">💖</div>
-        <div className="absolute bottom-4 left-4 animate-sparkle text-xl opacity-20">💕</div>
+      <div className="bg-gradient-to-br from-white/95 to-pink-50/95 dark:from-slate-800/95 dark:to-pink-950/95 backdrop-blur-sm rounded-3xl border-2 border-pink-200/60 dark:border-pink-700/60 p-2 sm:p-8 shadow-2xl hearts-bg relative overflow-hidden">
+        <div className="hidden sm:block absolute top-4 right-4 animate-heart-beat text-2xl opacity-20">💖</div>
+        <div className="hidden sm:block absolute bottom-4 left-4 animate-sparkle text-xl opacity-20">💕</div>
         {/* Month Navigation */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-2 sm:mb-8">
           <button
             onClick={() => navigateMonth(-1)}
-            className="group p-3 rounded-full hover:bg-gradient-to-r hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-900/30 transition-all duration-300 transform hover:scale-110"
+            className="group p-2 sm:p-3 rounded-full hover:bg-gradient-to-r hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-900/30 transition-all duration-300 transform hover:scale-110"
           >
-            <span className="text-2xl group-hover:animate-wiggle">←</span>
+            <span className="text-lg sm:text-2xl group-hover:animate-wiggle">←</span>
           </button>
           <button
             onClick={handleMonthClick}
-            className="text-2xl font-bold text-slate-800 dark:text-slate-200 font-quicksand hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-300 cursor-pointer group"
+            className="text-base sm:text-2xl font-bold text-slate-800 dark:text-slate-200 font-quicksand hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-300 cursor-pointer group"
           >
             <span className="group-hover:animate-pulse">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </span>
-            <span className="ml-2 text-sm opacity-60 group-hover:opacity-100 transition-opacity">
+            <span className="hidden sm:inline ml-2 text-sm opacity-60 group-hover:opacity-100 transition-opacity">
               📅 Click to view all tasks
             </span>
           </button>
           <button
             onClick={() => navigateMonth(1)}
-            className="group p-3 rounded-full hover:bg-gradient-to-r hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-900/30 transition-all duration-300 transform hover:scale-110"
+            className="group p-2 sm:p-3 rounded-full hover:bg-gradient-to-r hover:from-rose-100 hover:to-pink-100 dark:hover:from-rose-900/30 dark:hover:to-pink-900/30 transition-all duration-300 transform hover:scale-110"
           >
-            <span className="text-2xl group-hover:animate-wiggle">→</span>
+            <span className="text-lg sm:text-2xl group-hover:animate-wiggle">→</span>
           </button>
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-2 mb-4">
+        <div className="grid grid-cols-7 gap-1 mb-2 sm:mb-4">
           {dayNames.map(day => (
-            <div key={day} className="p-3 text-center text-sm font-bold text-slate-600 dark:text-slate-400 font-quicksand">
+            <div key={day} className="p-1 sm:p-3 text-center text-[9px] sm:text-sm font-bold text-slate-600 dark:text-slate-400 font-quicksand">
               {day}
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1">
           {days.map((day, index) => {
             const dayTasks = getTasksForDate(day)
             const isCurrentDay = isToday(day)
@@ -315,7 +315,7 @@ export default function CalendarSchedule({ tasks, setTasks, onCreateTask, onUpda
                 onMouseEnter={() => setHoveredDate(day)}
                 onMouseLeave={() => setHoveredDate(null)}
                 className={`
-                  min-h-[100px] p-3 rounded-2xl cursor-pointer transition-all duration-300 border-2 relative group
+                  min-h-[56px] sm:min-h-[100px] p-1 sm:p-3 rounded-lg sm:rounded-2xl cursor-pointer transition-all duration-300 border-2 relative group
                   ${day ? 'hover:scale-105 hover:shadow-lg' : ''}
                   ${isCurrentDay ? 'bg-gradient-to-br from-pink-200 to-rose-200 dark:from-pink-800 dark:to-rose-800 border-pink-400 dark:border-pink-600 shadow-lg animate-love-pulse' : ''}
                   ${isSelectedDay ? 'bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-900/40 dark:to-rose-900/40 border-pink-300 dark:border-pink-600 shadow-md' : ''}
@@ -327,11 +327,11 @@ export default function CalendarSchedule({ tasks, setTasks, onCreateTask, onUpda
               >
                 {day && (
                   <>
-                    <div className={`text-lg font-bold mb-2 flex items-center justify-between ${isCurrentDay ? 'text-pink-800 dark:text-pink-200' : 'text-slate-700 dark:text-slate-300'}`}>
+                    <div className={`text-sm sm:text-lg font-bold mb-1 flex items-center justify-center sm:justify-between ${isCurrentDay ? 'text-pink-800 dark:text-pink-200' : 'text-slate-700 dark:text-slate-300'}`}>
                       <span>{day.getDate()}</span>
-                      {isCurrentDay && <span className="animate-heart-beat text-sm">💖</span>}
+                      {isCurrentDay && <span className="hidden sm:inline animate-heart-beat text-sm">💖</span>}
                     </div>
-                    <div className="space-y-1">
+                    <div className="hidden sm:block space-y-0.5 sm:space-y-1">
                       {dayTasks.slice(0, 2).map(task => (
                         <div
                           key={task.id}
@@ -339,7 +339,7 @@ export default function CalendarSchedule({ tasks, setTasks, onCreateTask, onUpda
                             e.stopPropagation()
                             handleTaskClick(task)
                           }}
-                          className={`text-xs px-2 py-1 rounded-full truncate cursor-pointer transition-all duration-200 hover:scale-105 ${taskCategories[task.category].color} ${
+                          className={`text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full truncate cursor-pointer transition-all duration-200 hover:scale-105 ${taskCategories[task.category].color} ${
                             task.completed ? 'opacity-60 line-through' : ''
                           }`}
                         >
@@ -348,13 +348,13 @@ export default function CalendarSchedule({ tasks, setTasks, onCreateTask, onUpda
                         </div>
                       ))}
                       {dayTasks.length > 2 && (
-                        <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                        <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold text-center">
                           +{dayTasks.length - 2} more
                         </div>
                       )}
                     </div>
                     {dayTasks.length > 0 && (
-                      <div className="absolute top-1 right-1 flex items-center gap-1">
+                      <div className="hidden sm:flex absolute top-1 right-1 items-center gap-1">
                         <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
                         <span className="text-xs animate-heart-beat">💕</span>
                       </div>

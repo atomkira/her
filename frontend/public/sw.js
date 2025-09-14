@@ -46,8 +46,8 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: 'Study Tracker 💖',
     body: 'You have a new notification!',
-    icon: '/manifest-icon-192.png',
-    badge: '/manifest-icon-192.png',
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
     vibrate: [200, 100, 200, 100, 200],
     requireInteraction: true,
     tag: 'study-tracker-notification'
@@ -65,8 +65,8 @@ self.addEventListener('push', (event) => {
         tag: pushData.tag || notificationData.tag,
         data: pushData.data || {},
         actions: pushData.actions || [
-          { action: 'view', title: '💖 View', icon: '/manifest-icon-192.png' },
-          { action: 'dismiss', title: '💤 Dismiss', icon: '/manifest-icon-192.png' }
+          { action: 'view', title: '💖 View', icon: '/favicon.ico' },
+          { action: 'dismiss', title: '💤 Dismiss', icon: '/favicon.ico' }
         ]
       };
     } catch (error) {
@@ -195,121 +195,80 @@ async function checkAndSendNotifications() {
   }
 }
 
-// Update stored tasks using IndexedDB
-function updateStoredTasks(tasks) {
-  try {
-    self.studyTrackerTasks = tasks;
-    storeTasksInIndexedDB(tasks);
-  } catch (error) {
-    console.error('Error updating stored tasks:', error);
-  }
-}
+// --- Refactored IndexedDB Logic ---
+const DB_NAME = 'StudyTrackerDB';
+const DB_VERSION = 1;
+const TASK_STORE_NAME = 'tasks';
 
-// Store tasks in IndexedDB with proper error handling
-function storeTasksInIndexedDB(tasks) {
-  const request = indexedDB.open('StudyTrackerDB', 2); // Increment version to force upgrade
-  
-  request.onupgradeneeded = function(event) {
-    const db = event.target.result;
-    
-    // Delete existing object store if it exists
-    if (db.objectStoreNames.contains('tasks')) {
-      db.deleteObjectStore('tasks');
-    }
-    
-    // Create new object store
-    db.createObjectStore('tasks', { keyPath: 'id' });
-    console.log('IndexedDB object store created/recreated');
-  };
-  
-  request.onsuccess = function(event) {
-    const db = event.target.result;
-    
-    try {
-      const transaction = db.transaction(['tasks'], 'readwrite');
-      const store = transaction.objectStore('tasks');
-      
-      // Clear existing tasks and add new ones
-      store.clear();
-      tasks.forEach(task => {
-        try {
-          store.add(task);
-        } catch (error) {
-          console.warn('Failed to add task to IndexedDB:', error);
-        }
-      });
-      
-      transaction.oncomplete = function() {
-        console.log('Tasks stored in IndexedDB successfully');
-      };
-      
-      transaction.onerror = function(error) {
-        console.error('Transaction error:', error);
-      };
-    } catch (error) {
-      console.error('Failed to create transaction:', error);
-      // Fallback: just store in memory
-      self.studyTrackerTasks = tasks;
-    }
-  };
-  
-  request.onerror = function(event) {
-    console.error('IndexedDB error:', event.target.error);
-    // Fallback: store in service worker memory
-    self.studyTrackerTasks = tasks;
-  };
-  
-  request.onblocked = function(event) {
-    console.warn('IndexedDB upgrade blocked');
-  };
-}
+let dbPromise = null;
 
-// Get stored tasks from IndexedDB or service worker global variable
-async function getStoredTasks() {
-  try {
-    // First try to get from service worker global variable
-    if (self.studyTrackerTasks) {
-      return self.studyTrackerTasks;
-    }
-    
-    // Try to get from IndexedDB
-    return new Promise((resolve) => {
-      const request = indexedDB.open('StudyTrackerDB', 2);
-      
-      request.onsuccess = function(event) {
+function getDb() {
+  if (!dbPromise) {
+    dbPromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onupgradeneeded = (event) => {
         const db = event.target.result;
-        
-        if (!db.objectStoreNames.contains('tasks')) {
-          resolve([]);
-          return;
-        }
-        
-        try {
-          const transaction = db.transaction(['tasks'], 'readonly');
-          const store = transaction.objectStore('tasks');
-          const getAllRequest = store.getAll();
-          
-          getAllRequest.onsuccess = function() {
-            resolve(getAllRequest.result || []);
-          };
-          
-          getAllRequest.onerror = function() {
-            resolve([]);
-          };
-        } catch (error) {
-          console.error('Error reading from IndexedDB:', error);
-          resolve([]);
+        if (!db.objectStoreNames.contains(TASK_STORE_NAME)) {
+          db.createObjectStore(TASK_STORE_NAME, { keyPath: 'id' });
         }
       };
-      
-      request.onerror = function() {
-        resolve([]);
+
+      request.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+
+      request.onerror = (event) => {
+        reject(event.target.error);
       };
     });
+  }
+  return dbPromise;
+}
+
+async function storeTasksInIndexedDB(tasks) {
+  try {
+    const db = await getDb();
+    const transaction = db.transaction(TASK_STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(TASK_STORE_NAME);
+    store.clear();
+    tasks.forEach(task => store.put(task));
+    await new Promise((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    console.log('Tasks stored in IndexedDB successfully');
   } catch (error) {
-    console.error('Error getting stored tasks:', error);
+    console.error('Failed to store tasks in IndexedDB:', error);
+    // Fallback to in-memory store
+    self.studyTrackerTasks = tasks;
+  }
+}
+
+async function getStoredTasks() {
+  try {
+    if (self.studyTrackerTasks) {
+        return self.studyTrackerTasks;
+    }
+    const db = await getDb();
+    const transaction = db.transaction(TASK_STORE_NAME, 'readonly');
+    const store = transaction.objectStore(TASK_STORE_NAME);
+    const tasks = await new Promise((resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    self.studyTrackerTasks = tasks;
+    return tasks;
+  } catch (error) {
+    console.error('Failed to get tasks from IndexedDB:', error);
     return [];
   }
+}
+
+function updateStoredTasks(tasks) {
+  self.studyTrackerTasks = tasks;
+  storeTasksInIndexedDB(tasks);
 }
 
 // Enhanced message handling for better notifications
