@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,13 +7,215 @@
 /* Smooth fonts and base styles */
 html, body, #root {
   height: 100%;
+  font-family: 'Nunito', sans-serif;
 }
 
 body {
   @apply antialiased;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fdf2f8 100%);
+  background-attachment: fixed;
 }
 
-/* Optional: refine focus outline colors for accessibility */
+/* Playful animations */
+@keyframes bounce-in {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.05) rotate(2deg); }
+  70% { transform: scale(0.9) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(236, 72, 153, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(236, 72, 153, 0.6), 0 0 30px rgba(236, 72, 153, 0.4); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes water-drop {
+  0% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+  50% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(20px) scale(0.5); opacity: 0; }
+}
+
+@keyframes plant-grow {
+  0% { transform: scale(0.8) rotate(-2deg); }
+  50% { transform: scale(1.1) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes decoration-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(1deg); }
+  75% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes cute-bounce {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+@keyframes love-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4), 0 0 0 0 rgba(219, 39, 119, 0.2); 
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 15px rgba(236, 72, 153, 0), 0 0 0 25px rgba(219, 39, 119, 0); 
+    transform: scale(1.02);
+  }
+}
+
+.animate-water-drop {
+  animation: water-drop 1s ease-out;
+}
+
+.animate-plant-grow {
+  animation: plant-grow 0.8s ease-out;
+}
+
+.animate-decoration-float {
+  animation: decoration-float 3s ease-in-out infinite;
+}
+
+.animate-heart-beat {
+  animation: heart-beat 1.5s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.animate-cute-bounce {
+  animation: cute-bounce 2s ease-in-out infinite;
+}
+
+.animate-love-pulse {
+  animation: love-pulse 2s ease-in-out infinite;
+}
+
+/* Cute heart decorations */
+.heart-decoration::before {
+  content: '💖';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 0.8rem;
+  animation: heart-beat 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+.heart-decoration::after {
+  content: '💕';
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  font-size: 0.6rem;
+  animation: sparkle 3s ease-in-out infinite;
+  z-index: 10;
+}
+
+/* Floating hearts background */
+.hearts-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.hearts-bg::before {
+  content: '💖 💕 💗 💓 💝 💖 💕 💗 💓 💝';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.05;
+  font-size: 2rem;
+  line-height: 3rem;
+  pointer-events: none;
+  z-index: 0;
+  animation: decoration-float 20s linear infinite;
+}
+
+/* Cute focus styles with hearts */
 :focus-visible {
+  outline: 2px solid #ec4899;
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
+}
+
+/* Custom scrollbar with hearts theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #fce7f3, #fdf2f8);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #ec4899, #db2777);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #db2777, #be185d);
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(236, 72, 153, 0.3);
+  color: #be185d;
 }

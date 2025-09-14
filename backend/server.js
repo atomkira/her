@@ -8,8 +8,10 @@ import blocksRouter from './routes/blocks.js'
 import pomodoroRouter from './routes/pomodoro.js'
 import examsRouter from './routes/exams.js'
 import tasksRouter from './routes/tasks.js'
+import calendarTasksRouter from './routes/calendarTasks.js'
 import noteTimerRouter from './routes/noteTimer.js'
 import waterRouter from './routes/water.js'
+import pushNotificationsRouter from './routes/pushNotifications.js'
 
 // Ensure .env is loaded from this backend directory regardless of CWD
 const __filename = fileURLToPath(import.meta.url)
@@ -26,7 +28,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/studytracker'
 const DB_NAME = process.env.MONGODB_DB || undefined
 
@@ -53,6 +55,7 @@ app.use('/api/blocks', blocksRouter)
 app.use('/api/pomodoro', pomodoroRouter)
 app.use('/api/exams', examsRouter)
 app.use('/api/tasks', tasksRouter)
+app.use('/api/calendar-tasks', calendarTasksRouter)
 app.use('/api/note-timer', noteTimerRouter)
 app.use('/api/water', waterRouter)
-
+app.use('/api/push', pushNotificationsRouter)

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getJSON, putJSON } from '../lib/api'
+import pushNotificationManager from '../utils/pushNotificationManager.js'
 
 export default function WaterReminder() {
   const [intervalMin, setIntervalMin] = useState(30)
@@ -80,15 +81,28 @@ export default function WaterReminder() {
 
   const sendNotification = async () => {
     const granted = await ensureNotifPermission()
-    const title = 'Time to drink water 💧'
-    const body = `It has been ${intervalMin} minute${intervalMin === 1 ? '' : 's'}. Tap "Drank now" when you hydrate!`
+    const title = '💧 Time to drink water!'
+    const body = `It has been ${intervalMin} minute${intervalMin === 1 ? '' : 's'}. Tap "Drank now" when you hydrate! 💕`
+    
+    // Send push notification (works even when app is closed)
+    if (await pushNotificationManager.isSubscribed()) {
+      await pushNotificationManager.sendWaterReminder()
+    }
+    
+    // Also send local notification for immediate feedback
     if (granted) {
       try {
-        new Notification(title, { body, silent: false })
+        new Notification(title, { 
+          body, 
+          silent: false,
+          icon: '/manifest-icon-192.png',
+          tag: 'water-reminder'
+        })
       } catch {}
     }
+    
     // fallback UI toast
-    setToast('Time to drink water 💧')
+    setToast('💧 Time to drink water!')
     setTimeout(() => setToast(''), 3000)
   }
 
@@ -139,8 +153,8 @@ export default function WaterReminder() {
     const newTotal = total + 1
     setTotal(newTotal)
     setNotified(false)
-    // cute confirmation
-    setToast('Yay! You hydrated 💧✨')
+    // cute confirmation with heart theme
+    setToast('Yay! You hydrated 💧💖✨')
     setTimeout(() => setToast(''), 2000)
     persist({ nextAt: newNext, totalReminders: newTotal })
   }
@@ -148,9 +162,9 @@ export default function WaterReminder() {
   return (
     <div className="rounded-2xl border p-5 bg-gradient-to-br from-sky-50 to-cyan-50 dark:from-sky-900/20 dark:to-cyan-900/10 border-sky-200/60 dark:border-sky-800/60">
       <div className="flex items-center gap-2">
-        <span className="text-2xl">💧</span>
+        <span className="text-2xl animate-bounce">💧</span>
         <h3 className="text-lg font-bold">Water Reminder</h3>
-        <span className="ml-auto text-xs px-2 py-0.5 rounded-full border border-sky-200 bg-sky-100 text-sky-700 dark:border-sky-800 dark:bg-sky-900/40 dark:text-sky-200">stay hydrated</span>
+        <span className="ml-auto text-xs px-2 py-0.5 rounded-full border border-sky-200 bg-sky-100 text-sky-700 dark:border-sky-800 dark:bg-sky-900/40 dark:text-sky-200">stay hydrated 💖</span>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
