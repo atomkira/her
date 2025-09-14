@@ -28,9 +28,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-// Friendly root route for Render and manual checks
+// Serve the React app on root
 app.get('/', (_req, res) => {
-  res.type('text/plain').send('Study Tracker API is running. Try GET /api/health')
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
 const PORT = process.env.PORT || 5001
